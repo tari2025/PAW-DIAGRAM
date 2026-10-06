@@ -1,0 +1,65 @@
+@startuml
+title Activity Diagram - Fitur Chat dengan AI\nWebsite Puskesmas Desa
+skinparam activity {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+skinparam swimlane {
+    BorderColor Black
+    TitleBackgroundColor LightGray
+}
+
+' === SWIMLANES (PARTICIPANTS) ===
+|Pasien / Pengunjung|
+|Sistem Website Puskesmas|
+|Gemini API|
+
+' === ALUR AKTIVITAS ===
+|Pasien / Pengunjung|
+start
+:Membuka halaman Website Puskesmas;
+:Membuka fitur "Chat dengan AI";
+
+|Sistem Website Puskesmas|
+:Menampilkan antarmuka Chat;
+
+|Pasien / Pengunjung|
+:Menginput pertanyaan/keluhan;
+:Menekan tombol "Kirim";
+
+|Sistem Website Puskesmas|
+:Menerima input pesan dari Pasien;
+:Memproses format pesan;
+
+' Menggunakan include UC_Pesan
+:Mengirim pesan ke Gemini API;
+
+|Gemini API|
+:Menerima pesan dari sistem;
+:Memproses pesan (AI Engine);
+:Membuat balasan/response;
+
+|Sistem Website Puskesmas|
+:Menerima balasan dari Gemini API;
+:Menampilkan balasan di layar chat;
+
+|Pasien / Pengunjung|
+:Melihat balasan dari AI;
+
+if (Ingin bertanya lagi?) then (Ya)
+    |Pasien / Pengunjung|
+    :Menginput pertanyaan baru;
+    |Sistem Website Puskesmas|
+    :Mengirim ulang ke API;
+    |Gemini API|
+    :Memproses pesan baru;
+    |Sistem Website Puskesmas|
+    :Menampilkan balasan baru;
+else (Tidak)
+    |Pasien / Pengunjung|
+    :Menutup fitur Chat;
+    stop
+endif
+
+@enduml

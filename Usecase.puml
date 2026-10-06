@@ -1,0 +1,59 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' === TITLE ===
+title Use Case Diagram\nWebsite Puskesmas Desa
+
+' === ACTORS ===
+actor "Pasien /\nPengunjung" as Pasien
+actor "Admin" as Admin
+actor "Gemini API\n(Aktor Eksternal)" as Gemini <<External>> #LightBlue
+
+' === SYSTEM BOUNDARY ===
+rectangle "Sistem Website Puskesmas Desa" {
+
+    ' --- Pasien Use Cases ---
+    usecase "Melihat Informasi\nRumah Sakit" as UC_MelihatRS
+    usecase "Melihat Layanan" as UC_Layanan
+    usecase "Melihat Jadwal Dokter" as UC_JadwalPasien
+    usecase "Melihat Lokasi\nPuskesmas" as UC_Lokasi
+    usecase "Chat dengan AI" as UC_ChatAI
+
+    ' --- PERBAIKAN: UC_Pesan sekarang menjadi Use Case (Lonjong) di dalam sistem ---
+    usecase "Mengirim/Menerima\nPesan" as UC_Pesan
+
+    ' --- Admin Use Cases ---
+    usecase "Mengelola Layanan" as UC_KelolaLayanan
+    usecase "Mengelola Jadwal Dokter" as UC_KelolaJadwal
+    usecase "Mengelola Data Informasi\nRumah Sakit" as UC_KelolaRS
+
+}
+
+' === RELATIONSHIPS: PASIEN ===
+Pasien --> UC_MelihatRS
+Pasien --> UC_Layanan
+Pasien --> UC_JadwalPasien
+Pasien --> UC_Lokasi
+Pasien --> UC_ChatAI
+
+' === RELATIONSHIPS: ADMIN ===
+Admin --> UC_KelolaLayanan
+Admin --> UC_KelolaJadwal
+Admin --> UC_KelolaRS
+
+' === RELATIONSHIPS: INCLUDE & USES ===
+
+' Include: Chat dengan AI -> Mengirim/Menerima Pesan
+UC_ChatAI ..> UC_Pesan : <<include>>
+
+' Uses: Mengirim/Menerima Pesan -> Gemini API (Aktor Eksternal)
+' Panah mengarah ke luar sistem menuju Aktor Gemini
+UC_Pesan --> Gemini : <<uses>>
+
+@enduml

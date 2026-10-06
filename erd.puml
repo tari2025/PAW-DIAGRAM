@@ -1,0 +1,118 @@
+@startuml
+title ERD - Website Puskesmas Desa
+
+' === STYLING ===
+skinparam shadowing false
+skinparam nodesep 60
+skinparam ranksep 70
+skinparam ArrowColor Black
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+}
+skinparam package {
+    BackgroundColor #F9F9F9
+    BorderColor Black
+    FontStyle Bold
+}
+skinparam packageStyle rectangle
+hide circle
+skinparam classAttributeIconSize 0
+
+' === AREA ADMIN ===
+package "AREA ADMIN " {
+    entity "Admin" as admin {
+        *id_admin : INT <<PK>>
+        --
+        *username : VARCHAR(50) <<UNIQUE>>
+        *password : VARCHAR(255)
+        *nama_lengkap : VARCHAR(100)
+        email : VARCHAR(100)
+    }
+
+    entity "Layanan" as layanan {
+        *id_layanan : INT <<PK>>
+        --
+        *id_admin : INT <<FK>>
+        *nama_layanan : VARCHAR(100)
+        deskripsi : TEXT
+    }
+
+    entity "Data Dokter" as dokter {
+        *id_dokter : INT <<PK>>
+        --
+        *id_admin : INT <<FK>>
+        *nama_dokter : VARCHAR(100)
+        spesialis : VARCHAR(100)
+    }
+
+    entity "Jadwal_Dokter" as jadwal {
+        *id_jadwal : INT <<PK>>
+        --
+        *id_dokter : INT <<FK>>
+        *hari : VARCHAR(20)
+        *jam_mulai : TIME
+        *jam_selesai : TIME
+    }
+
+    entity "Informasi_Puskesmas" as info {
+        *id_info : INT <<PK>>
+        --
+        *id_admin : INT <<FK>>
+        *nama_puskesmas : VARCHAR(100)
+        alamat : TEXT
+        no_telepon : VARCHAR(20)
+        latitude : DECIMAL(10,8)
+        longitude : DECIMAL(11,8)
+    }
+}
+
+' === AREA PASIEN ===
+package "AREA PASIEN " {
+    entity "Pasien" as pasien {
+        *id_pasien : INT <<PK>>
+        --
+        nama : VARCHAR(100)
+        email : VARCHAR(100)
+        no_hp : VARCHAR(20)
+    }
+
+    entity "Chat_Session" as chat {
+        *id_chat : INT <<PK>>
+        --
+        id_pasien : INT <<FK>>
+        *session_id : VARCHAR(255) <<UNIQUE>>
+        *waktu_mulai : DATETIME
+        waktu_selesai : DATETIME
+    }
+
+    entity "Pesan" as pesan {
+        *id_pesan : INT <<PK>>
+        --
+        *id_chat : INT <<FK>>
+        *pengirim : ENUM('Pasien','AI')
+        *isi_pesan : TEXT
+        *waktu_kirim : DATETIME
+    }
+}
+
+' === RELASI AREA ADMIN (garis penuh) ===
+admin ||-down-o{ layanan : mengelola
+admin ||-down-o{ dokter : mengelola
+admin ||-down-o{ info : mengelola
+dokter ||-down-o{ jadwal : memiliki
+
+' === RELASI AREA PASIEN (garis penuh, horizontal) ===
+pasien ||-right-o{ chat : memulai
+chat ||-right-o{ pesan : berisi
+
+' === AKSES BACA PASIEN (garis putus-putus, naik ke atas) ===
+pasien .up.> layanan : melihat
+pasien .up.> dokter : melihat
+pasien .up.> jadwal : melihat
+pasien .up.> info : melihat
+
+' === LAYOUT: Pasien di bawah area Admin ===
+jadwal -[hidden]down- pasien
+
+@enduml

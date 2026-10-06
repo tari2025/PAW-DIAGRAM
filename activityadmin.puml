@@ -1,0 +1,65 @@
+@startuml
+title Activity Diagram - Admin (Kelola Layanan, Jadwal, & Informasi RS)
+
+skinparam activity {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+    DiamondBackgroundColor #FFFFCC
+    DiamondBorderColor Black
+}
+skinparam swimlane {
+    BorderColor Black
+    TitleBackgroundColor LightGreen
+}
+
+|Admin (Frontend)|
+start
+repeat
+    :Membuka Halaman Login;
+    :Input Username & Password;
+
+    |Sistem (Backend Logic)|
+    :Validasi Login;
+    |Database|
+    :Cek Data Admin;
+    |Sistem (Backend Logic)|
+    backward :Tampilkan Pesan Error;
+repeat while (Login Valid?) is (Tidak) not (Ya)
+
+:Arahkan ke Dashboard Admin;
+
+|Admin (Frontend)|
+repeat
+    :Pilih Menu;
+
+    if (Menu?) then (Kelola Layanan)
+        :Input Data Layanan;
+    elseif () then (Kelola Jadwal Dokter)
+        :Input Jadwal Dokter;
+    else (Kelola Informasi RS)
+        :Edit Profil / Alamat RS;
+    endif
+
+    |Sistem (Backend Logic)|
+    :Memproses & Validasi Data;
+
+    if (Data Valid?) then (Ya)
+        |Database|
+        :Simpan Data;
+        |Sistem (Backend Logic)|
+        :Kirim Respons Berhasil;
+        |Admin (Frontend)|
+        :Tampilkan Pesan "Berhasil";
+    else (Tidak)
+        |Sistem (Backend Logic)|
+        :Kirim Pesan Error Validasi;
+        |Admin (Frontend)|
+        :Tampilkan Pesan Error;
+    endif
+
+repeat while (Kelola menu lain?) is (Ya) not (Tidak)
+
+:Logout dari Sistem;
+stop
+@enduml
